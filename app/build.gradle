@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 
+task prepareKotlinBuildScriptModel{
+
+}
 android {
     compileSdkVersion 30
 
