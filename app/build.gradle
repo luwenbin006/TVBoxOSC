@@ -31,6 +31,8 @@ android {
             minifyEnabled false
 
             ndk {
+                abiFilters 'x86_64'
+                abiFilters 'x86'
                 abiFilters 'armeabi-v7a'
             }
         }
@@ -39,6 +41,8 @@ android {
             minifyEnabled true
 
             ndk {
+                abiFilters 'x86_64'
+                abiFilters 'x86'
                 abiFilters 'armeabi-v7a'
             }
         }

@@ -57,6 +57,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     private HomeHotVodAdapter homeHotVodAdapter;
     private List<Movie.Video> homeSourceRec;
 
+    private boolean firstTimeEntryFlag = true;
+
     public static UserFragment newInstance() {
         return new UserFragment();
     }
@@ -156,6 +158,11 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvHotList.setAdapter(homeHotVodAdapter);
 
         initHomeHotVod(homeHotVodAdapter);
+
+        if (firstTimeEntryFlag) {
+            jumpActivity(LivePlayActivity.class);
+            firstTimeEntryFlag = false;
+        }
     }
 
     private void initHomeHotVod(HomeHotVodAdapter adapter) {
