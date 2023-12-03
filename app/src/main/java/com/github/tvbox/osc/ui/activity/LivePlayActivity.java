@@ -1035,7 +1035,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
                     do {
                         channelGroupIndex--;
-                        if (channelGroupIndex < 0)
+                        if (channelGroupIndex < 0 )
                             channelGroupIndex = liveChannelGroupList.size() - 1;
                     } while (!liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() || channelGroupIndex == currentChannelGroupIndex);
                 }
