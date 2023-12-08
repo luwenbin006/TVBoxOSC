@@ -55,7 +55,8 @@ public class ApiDialog extends BaseDialog {
         ivQRCode = findViewById(R.id.ivQRCode);
         tvAddress = findViewById(R.id.tvAddress);
         inputApi = findViewById(R.id.input);
-        inputApi.setText(Hawk.get(HawkConfig.API_URL, "https://cdn.jsdelivr.net/gh/liu673cn/box@main/m.json"));
+        inputApi.setText(Hawk.get(HawkConfig.API_URL, ""));
+        inputApi.setActivated(false);
         findViewById(R.id.inputSubmit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,8 +65,9 @@ public class ApiDialog extends BaseDialog {
                     ArrayList<String> history = Hawk.get(HawkConfig.API_HISTORY, new ArrayList<String>());
                     if (!history.contains(newApi))
                         history.add(0, newApi);
-                    if (history.size() > 10)
-                        history.remove(10);
+                    if (history.size() > 10) {
+                    }
+                    history.remove(10);
                     Hawk.put(HawkConfig.API_HISTORY, history);
                     listener.onchange(newApi);
                     dismiss();

@@ -207,6 +207,9 @@ public class ModelSettingFragment extends BaseLazyFragment {
         findViewById(R.id.llApi).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (true){
+                    return;
+                }
                 FastClickCheckUtil.check(v);
                 ApiDialog dialog = new ApiDialog(mActivity);
                 EventBus.getDefault().register(dialog);

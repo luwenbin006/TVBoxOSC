@@ -249,6 +249,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         } else if (v.getId() == R.id.tvSearch) {
             jumpActivity(SearchActivity.class);
         } else if (v.getId() == R.id.tvSetting) {
+            ApiConfig.get().downlaodLiveJson();
             jumpActivity(SettingActivity.class);
         } else if (v.getId() == R.id.tvHistory) {
             jumpActivity(HistoryActivity.class);

@@ -16,6 +16,7 @@ import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.util.AdBlocker;
 import com.github.tvbox.osc.util.DefaultConfig;
+import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.MD5;
 import com.google.gson.Gson;
@@ -36,11 +37,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author pj567
@@ -212,14 +215,75 @@ public class ApiConfig {
         });
     }
 
+    public void downlaodLiveJson(){
+        OkGo.<String>get("http://tv.skynetcn.cn:8880/download/live.json")
+                .execute(new AbsCallback<String>() {
+                    @Override
+                    public String convertResponse(okhttp3.Response response) throws Throwable {
+                        String result = "";
+                        if (response.body() == null) {
+                            result = "";
+                        } else {
+                            result = response.body().string();
+                        }
+                        return result;
+                    }
 
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        try {
+                            String json = response.body();
+                            JsonObject liveJson = new Gson().fromJson(json, JsonObject.class);
+                            if (Objects.nonNull(liveJson) && !liveJson.isJsonNull()) {
+                                // 写入缓存文件
+                                File cacheDir = new File(App.getInstance().getCacheDir().getAbsolutePath() + "/catvod_csp");
+                                if (!cacheDir.exists()) {
+                                    cacheDir.mkdirs();
+
+                                }
+                                FileUtils.writeSimple(new String(json).getBytes("utf-8"), new File(cacheDir + "/live.json"));
+                            }
+                        } catch (Throwable th) {
+                            th.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+                        //try {
+                        // parseJson(new Gson().fromJson(new InputStreamReader(App.getInstance().getAssets().open("live.json")), JsonObject.class));
+                        //} catch (IOException e) {
+                        //    throw new RuntimeException(e);
+                        // }
+                    }
+                });
+    }
     private void parseJson() {
+        downlaodLiveJson();
+        parseJsonForCache();
+    }
+
+    private void parseJsonForCache() {
         JsonObject infoJson = new JsonObject();
-        try {
-            infoJson = new Gson().fromJson(new InputStreamReader(App.getInstance().getAssets().open("live.json")), JsonObject.class);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        File cacheDir = new File(App.getInstance().getCacheDir().getAbsolutePath() + "/catvod_csp");
+        File liveFile = new File(cacheDir + "/live.json");
+        if (liveFile.exists()) {
+            try {
+                infoJson = new Gson().fromJson(new String(FileUtils.readSimple(liveFile),"utf-8"), JsonObject.class);
+            } catch (UnsupportedEncodingException e) {
+                // 代表本缓存文件存在问题，对缓存文件进行清理
+                liveFile.delete();
+                throw new RuntimeException(e);
+            }
+        } else {
+            try {
+                infoJson = new Gson().fromJson(new InputStreamReader(App.getInstance().getAssets().open("live.json")), JsonObject.class);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
+
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
         // 远端站点源
